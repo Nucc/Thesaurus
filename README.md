@@ -6,15 +6,14 @@ The plugin helps you in Sublime to find synonyms for the selected word and repla
 How to install
 ---
 
-  Find your packages directory. If you don't know where it is, Sublime will help you. On OSX follow the next menu structure:
+  Find your packages directory. If you don't know where it is, Sublime will help you. On Windows and Linux find the Browse Packages menu, on OSX follow the next menu structure:
 
     1. Sublime Text 2
     2. Preferences
     3. Browse Packages
 
-  On Windows and Linux find the Browse Packages menu.
 
-  Go to this folder in your console
+  Go to this folder in console
 
     $ cd ~/Library/Application Support/Sublime Text 2/Packages    # on OSX
 
@@ -22,7 +21,7 @@ How to install
 
     $ git clone https://github.com/Nucc/Thesaurus
 
-  Create an API key on Big Huge Labs.
+  Create an API key on Altervista.
 
     http://thesaurus.altervista.org/mykey
 
