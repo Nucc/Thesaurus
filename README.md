@@ -6,7 +6,8 @@ The plugin helps you in Sublime to find synonyms for the selected word and repla
 How to install
 ---
 
-  Find your packages directory. If you don't know where it is, Sublime will help you. On OSX the steps are:
+  Find your packages directory. If you don't know where it is, Sublime will help you. On OSX follow the next menu structure:
+
     1. Sublime Text 2
     2. Preferences
     3. Browse Packages
