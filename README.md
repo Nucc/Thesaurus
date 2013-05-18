@@ -23,7 +23,7 @@ How to install
 
   Create an API key on Big Huge Labs.
 
-    http://words.bighugelabs.com/getkey.php
+    http://thesaurus.altervista.org/mykey
 
   Add the API key to the Thesaurus.sublime-settings file:
 
