@@ -52,9 +52,9 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     return json.loads(content)
 
   def api_key(self):
-    settings = sublime.load_settings('Preferences.sublime-settings')
+    settings = sublime.load_settings('Thesaurus.sublime-settings')
     if settings.get("api_key"):
       return settings.get("api_key")
     else:
-      settings = sublime.load_settings('Thesaurus.sublime-settings')
+      settings = sublime.load_settings('Preferences.sublime-settings')
       return settings.get("thesaurus_api_key")
