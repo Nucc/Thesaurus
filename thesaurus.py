@@ -24,11 +24,13 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     self.processWord(self.selected_word())
 
   def noAction(self, value):
+    self.view.erase_status("Thesaurus")
     pass
 
   def processWord(self, word):
     self.word = word
     if self.word is None or len(self.word) == 0:
+      self.view.set_status("Thesaurus", "Please select a word first!")
       sublime.active_window().show_quick_panel(["Please select a word first!"], self.noAction)
       return
 
@@ -37,6 +39,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       sublime.active_window().show_quick_panel(self.results, self.valueIsSelected)
     except NoResultError:
       # nothing was found, look for alternatives
+      self.view.set_status("Thesaurus", "No results were found for '%s'!" % self.word)
       self.alternatives = ["No results were found for '%s'!, try one of the following:" % self.word]
       self.alternatives.extend(self.get_alternative_words())
       sublime.active_window().show_quick_panel(self.alternatives, self.alternativeIsSelected)
@@ -44,10 +47,13 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
   def alternativeIsSelected(self, value):
     if value > 1:
       self.processWord(self.alternatives[value])
+    else:
+      self.view.erase_status("Thesaurus")
 
   def valueIsSelected(self, value):
     if value != -1:
       self.replace(self.results[value])
+      self.view.erase_status("Thesaurus")
 
   def selected_word(self):
     for region in self.view.sel():
@@ -93,12 +99,15 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
   def get_alternative_words(self):
     # dirty hack around not being able to use enchant in sublime
     import subprocess
-    p = subprocess.Popen(["python", alternativesLocation, self.word], stdout=subprocess.PIPE)
-    alternativesString = p.communicate()[0]
-    p.stdout.close()
-    alternatives = []
-    # this will replace the alternatives var
-    exec alternativesString
+    try:
+      p = subprocess.Popen(["python", alternativesLocation, self.word], stdout=subprocess.PIPE)
+      alternativesString = p.communicate()[0]
+      p.stdout.close()
+      alternatives = []
+      # this will replace the alternatives var
+      exec alternativesString
+    except Exception as err:
+      alternatives = ['error', str(err)]
     if alternatives[0] == "error":
       print "Enchant error: %s, defaulting to dummy method..." % alternatives[1] 
       # nope, an error occurred, do it the dummy way
