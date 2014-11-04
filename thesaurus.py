@@ -86,9 +86,8 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     return r
 
   def get_json_from_api(self):
-    language = "en_US"
     word = urllib.parse.quote(self.word)
-    url = "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (self.api_key(), word, language)
+    url = "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (self.api_key(), word, self.language())
     with urllib.request.urlopen(url) as response:
         content = response.read().decode('utf-8')
         return json.loads(content)
@@ -100,6 +99,14 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     else:
       settings = sublime.load_settings('Preferences.sublime-settings')
       return settings.get("thesaurus_api_key")
+
+  def language(self):
+    settings = sublime.load_settings('Thesaurus.sublime-settings')
+    if settings.get("language"):
+      return settings.get("language")
+    else:
+      settings = sublime.load_settings('Preferences.sublime-settings')
+      return settings.get("thesaurus_language")
 
   def get_alternative_words(self):
     # dirty hack around not being able to use enchant in sublime

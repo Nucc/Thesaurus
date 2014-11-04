@@ -1,3 +1,4 @@
 {
-  "api_key": ""
+  "api_key": "",
+  "language": "en_US" //One of: it_IT, fr_FR, de_DE, en_US, el_GR, es_ES, de_DE, no_NO, pt_PT, ro_RO, ru_RU, sk_SK
 }
