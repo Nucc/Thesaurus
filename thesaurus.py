@@ -71,22 +71,27 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
 
   def synonyms(self):
     result = []
-    data = self.get_json_from_api()
     try:
-      for entry in data["response"]:
-        result.append(entry["list"]["synonyms"].split("|"))
-    except KeyError:
-      raise NoResultError(data["error"])
+        data = self.get_json_from_api()
+        for entry in data["response"]:
+            result.append(entry["list"]["synonyms"].split("|"))
+    except (KeyError, urllib.error.HTTPError):
+        if 'data' in locals():
+            raise NoResultError(data["error"])
+        else:
+            raise NoResultError("Word not found.")
 
     r = list(set([item for sublist in result for item in sublist]))
     r.sort()
     return r
 
   def get_json_from_api(self):
-    f = urllib.request.urlopen("http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=en_US&output=json" % (self.api_key(), urllib.parse.quote(self.word)))
-    content = f.read()
-    f.close()
-    return json.loads(content)
+    language = "en_US"
+    word = urllib.parse.quote(self.word)
+    url = "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (self.api_key(), word, language)
+    with urllib.request.urlopen(url) as response:
+        content = response.read().decode('utf-8')
+        return json.loads(content)
 
   def api_key(self):
     settings = sublime.load_settings('Thesaurus.sublime-settings')
@@ -109,7 +114,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     except Exception as err:
       alternatives = ['error', str(err)]
     if alternatives[0] == "error":
-      print("Enchant error: %s, defaulting to dummy method..." % alternatives[1]) 
+      print("Enchant error: %s, defaulting to dummy method..." % alternatives[1])
       # nope, an error occurred, do it the dummy way
       suffixes = ["es", "s", "ed", "er", "ly", "ing"]
       alternatives = []
