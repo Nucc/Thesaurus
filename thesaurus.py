@@ -1,5 +1,5 @@
 import sublime, sublime_plugin
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 import re
 import sys
@@ -83,7 +83,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     return r
 
   def get_json_from_api(self):
-    f = urllib.urlopen("http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=en_US&output=json" % (self.api_key(), urllib.quote(self.word)))
+    f = urllib.request.urlopen("http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=en_US&output=json" % (self.api_key(), urllib.parse.quote(self.word)))
     content = f.read()
     f.close()
     return json.loads(content)
@@ -105,11 +105,11 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       p.stdout.close()
       alternatives = []
       # this will replace the alternatives var
-      exec alternativesString
+      exec(alternativesString)
     except Exception as err:
       alternatives = ['error', str(err)]
     if alternatives[0] == "error":
-      print "Enchant error: %s, defaulting to dummy method..." % alternatives[1] 
+      print("Enchant error: %s, defaulting to dummy method..." % alternatives[1]) 
       # nope, an error occurred, do it the dummy way
       suffixes = ["es", "s", "ed", "er", "ly", "ing"]
       alternatives = []
