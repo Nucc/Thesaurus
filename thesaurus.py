@@ -1,9 +1,20 @@
 import sublime, sublime_plugin
-import urllib.request, urllib.parse, urllib.error
 import json
 import re
 import sys
 import os
+
+try:
+    from urllib.request import urlopen
+    from urllib.parse import urlparse
+    from urllib.parse import quote
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import quote
+    from urllib2 import urlopen
+    from urllib2 import HTTPError
+
 alternativesLocation = os.path.join(os.path.abspath(os.path.dirname(__file__)), "alternatives.py")
 
 class NoResultError(Exception):
@@ -75,7 +86,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
         data = self.get_json_from_api()
         for entry in data["response"]:
             result.append(entry["list"]["synonyms"].split("|"))
-    except (KeyError, urllib.error.HTTPError):
+    except (KeyError, HTTPError):
         if 'data' in locals():
             raise NoResultError(data["error"])
         else:
@@ -86,11 +97,12 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     return r
 
   def get_json_from_api(self):
-    word = urllib.parse.quote(self.word)
+    word = quote(self.word)
     url = "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (self.api_key(), word, self.language())
-    with urllib.request.urlopen(url) as response:
-        content = response.read().decode('utf-8')
-        return json.loads(content)
+    response = urlopen(url)
+    content = response.read().decode('utf-8')
+    response.close()
+    return json.loads(content)
 
   def api_key(self):
     settings = sublime.load_settings('Thesaurus.sublime-settings')
