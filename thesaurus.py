@@ -1,9 +1,20 @@
 import sublime, sublime_plugin
-import urllib
 import json
 import re
 import sys
 import os
+
+try:
+    from urllib.request import urlopen
+    from urllib.parse import urlparse
+    from urllib.parse import quote
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import quote
+    from urllib2 import urlopen
+    from urllib2 import HTTPError
+
 alternativesLocation = os.path.join(os.path.abspath(os.path.dirname(__file__)), "alternatives.py")
 
 class NoResultError(Exception):
@@ -71,21 +82,26 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
 
   def synonyms(self):
     result = []
-    data = self.get_json_from_api()
     try:
-      for entry in data["response"]:
-        result.append(entry["list"]["synonyms"].split("|"))
-    except KeyError:
-      raise NoResultError(data["error"])
+        data = self.get_json_from_api()
+        for entry in data["response"]:
+            result.append(entry["list"]["synonyms"].split("|"))
+    except (KeyError, HTTPError):
+        if 'data' in locals():
+            raise NoResultError(data["error"])
+        else:
+            raise NoResultError("Word not found.")
 
     r = list(set([item for sublist in result for item in sublist]))
     r.sort()
     return r
 
   def get_json_from_api(self):
-    f = urllib.urlopen("http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=en_US&output=json" % (self.api_key(), urllib.quote(self.word)))
-    content = f.read()
-    f.close()
+    word = quote(self.word)
+    url = "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (self.api_key(), word, self.language())
+    response = urlopen(url)
+    content = response.read().decode('utf-8')
+    response.close()
     return json.loads(content)
 
   def api_key(self):
@@ -96,6 +112,14 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       settings = sublime.load_settings('Preferences.sublime-settings')
       return settings.get("thesaurus_api_key")
 
+  def language(self):
+    settings = sublime.load_settings('Thesaurus.sublime-settings')
+    if settings.get("language"):
+      return settings.get("language")
+    else:
+      settings = sublime.load_settings('Preferences.sublime-settings')
+      return settings.get("thesaurus_language")
+
   def get_alternative_words(self):
     # dirty hack around not being able to use enchant in sublime
     import subprocess
@@ -105,11 +129,11 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       p.stdout.close()
       alternatives = []
       # this will replace the alternatives var
-      exec alternativesString
+      exec(alternativesString)
     except Exception as err:
       alternatives = ['error', str(err)]
     if alternatives[0] == "error":
-      print "Enchant error: %s, defaulting to dummy method..." % alternatives[1] 
+      print("Enchant error: %s, defaulting to dummy method..." % alternatives[1])
       # nope, an error occurred, do it the dummy way
       suffixes = ["es", "s", "ed", "er", "ly", "ing"]
       alternatives = []
