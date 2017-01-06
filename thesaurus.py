@@ -80,7 +80,6 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
     if value is not None:
       self.view.run_command("insert", {"characters": value.strip().lower()})
 
-
   def synonyms(self):
     result = []
     try:
