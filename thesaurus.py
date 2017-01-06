@@ -78,7 +78,8 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
 
     value = re.subn(r'\(.*?\)$', "", value)[0]
     if value is not None:
-      self.view.replace(self.edit, self.region, value.strip().lower())
+      self.view.run_command("insert", {"characters": value.strip().lower()})
+
 
   def synonyms(self):
     result = []
