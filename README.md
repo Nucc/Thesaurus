@@ -6,7 +6,7 @@ The plugin helps you in Sublime to find synonyms for the selected word and repla
 How to install
 ---
 
-To enable smart suggestions for alternatives to words that are not found in the thesaurus, PyEnchant must be installed in the external python environment. This can by done by running the command `pip install -U pyenchant` in a terminal / command window.
+To enable smart suggestions for alternatives to words that are not found in the thesaurus, PyEnchant must be installed in the external python environment. This can be done by running the command `pip install -U pyenchant` in a terminal / command window.
 
 Using Package Control
 ---
