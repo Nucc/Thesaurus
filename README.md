@@ -137,6 +137,16 @@ Some modifiers can be used to display more information about suggested words. Th
 | 2|IPA pronunciation|/pron||
 | 3|Word frequency|/freq|Uses per million words|
 
+###Examples
+
+|Selected string|Top suggestions|Comments|
+|:--------------|:--------------|:-------|
+|very difficult|murderous, heavy, arduous||
+|/m very difficult|murderous, heavy, arduous||
+|/means nice /sp b*|beautiful, big, brilliant||
+|/spec sport /topics ocean,joy|funniness, jocularity, rowing||
+|/rhy whine /dict /pron /freq|line, design, sign|Shows meanings, pronunciations and usage frequencies of suggested words|
+
 Contribution
 ---
 

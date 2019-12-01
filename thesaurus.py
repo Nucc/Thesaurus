@@ -115,9 +115,8 @@ class DataMuseCommandSwitches(object):
   Examples:
     very difficult - means 'very difficult'
     /means nice /sp b* - means nice, spelling starts with 'b'
-    /means nice /spell betr - means nice, spells like 'betr'
-    /means nice /so betr - means nice, sounds like 'betr'
-    /rhy nice - rhymes with 'nice'
+    /spec sport /topics ocean,joy
+    /rhy whine /dict /pron /freq
   '''
   all_switches = [\
   {"switch":"means", "short":"m", "urlparam":"ml"}, \
