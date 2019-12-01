@@ -137,6 +137,14 @@ Some modifiers can be used to display more information about suggested words. Th
 | 2|IPA pronunciation|/pron||
 | 3|Word frequency|/freq|Uses per million words|
 
+### Wildcards
+|Wildcard|Matches|
+|:-------|:------|
+|*|any number of characters|
+|?|any one character|
+|#|any English consonent|
+|@|any English vowel|
+
 ### Examples
 
 |Selected string|Top suggestions|Comments|
