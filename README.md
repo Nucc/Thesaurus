@@ -142,7 +142,7 @@ Some modifiers can be used to display more information about suggested words. Th
 |:-------|:------|
 |*|any number of characters|
 |?|any one character|
-|#|any English consonent|
+|#|any English consonant|
 |@|any English vowel|
 
 ### Examples
