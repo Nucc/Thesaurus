@@ -36,7 +36,7 @@ class LookupStrategy(object):
     content = response.read().decode('utf-8')
     response.close()
     return json.loads(content)
-  
+
   @classmethod
   def synonyms(cls, word, language):
     return cls.synonyms_impl(word, language, cls.get_url, cls.extract_data)
@@ -53,7 +53,7 @@ class LookupStrategy(object):
         if 'data' not in locals():
           raise NoResultError("error")
         else:
-          raise NoResultError("notfound")    
+          raise NoResultError("notfound")
     return result
 
 class AlterVistaLookup(LookupStrategy):
@@ -61,17 +61,17 @@ class AlterVistaLookup(LookupStrategy):
   def extract_data(cls, data):
     result = []
     for entry in data["response"]:
-        result.append(entry["list"]["synonyms"].split("|"))      
+        result.append(entry["list"]["synonyms"].split("|"))
     return list(set([item for sublist in result for item in sublist]))
     result.sort()
 
   @classmethod
   def get_url(cls, word, language):
       word = quote(word)
-      return "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (cls.api_key(), word, language) 
+      return "http://thesaurus.altervista.org/thesaurus/v1?key=%s&word=%s&language=%s&output=json" % (cls.api_key(), word, language)
 
   @classmethod
-  def api_key(cls): 
+  def api_key(cls):
     settings = sublime.load_settings('Thesaurus.sublime-settings')
     if settings.get("api_key"):
       return settings.get("api_key")
@@ -84,7 +84,7 @@ class DataMuseCommandSwitches(object):
   'means' is the default if there is no switch
   When switches are combined, words matching all specified switches
   are returned
-  
+
   Switches:
     For single words or groups of words:
       /means (m)
@@ -181,27 +181,31 @@ class DataMuseLookup(LookupStrategy):
       if ("score" not in x):
         x["score"] = 0
     sorted_data = sorted(data, key = lambda x : x["score"], reverse = True)
-    #print(sorted_data)
+    defs_present = False
     for entry in sorted_data:
+        e = [cls.process_tags(entry)]
         if "defs" in entry:
-            e = [cls.process_tags(entry)]
             top = ["","",""]
             i = 0
             for d in entry["defs"][:3]:
-              top[i] = d.replace("\t", " ")
-              i += 1
-            for d in top:
-              e.append(d)
-            result.append(e)
-        else:
-          e = cls.process_tags(entry)
-          result.append(e)
+              e.append(d.replace("\t", " "))
+              defs_present = True
+        result.append(e)
+    #if defs were present, update all result entries to have three def
+    #elements to play nice with Sublime's quick panel
+    if defs_present:
+        for e in result:
+            l = len(e);
+            d = 4-l
+            while l < 4:
+                e.append("");
+                l += 1;
+    #result = [["test", "expl"],["1", "2", "3"]]
     return result
 
   @classmethod
   def extract_switches_from_text(cls, text):
     l = list(map(str.strip, text.split(None, 1)))
-    print(l)
     ll = len(l)
     if (ll < 1):
       return None
@@ -230,7 +234,6 @@ class DataMuseLookup(LookupStrategy):
       else:
         for x in words:
           switch = cls.extract_switches_from_text(x)
-          print(switch)
           if switch != None:
             switches.append(switch)
     url = "https://api.datamuse.com/words"
