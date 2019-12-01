@@ -108,7 +108,7 @@ Select the word and press <code>(CMD/CTRL)+T</code>, or use the <code>(CMD/CTRL)
 When using Datamuse, modifiers can be added to selected text to obtain different kinds of related words. Modifiers are specified using the format "/<modifier> <values>". Modifiers can be combined to create a complex query for words that satisfy multiple conditions (only AND logic supported as of now). Simple synonym search is performed if the selected text does not start with a modifier.
 
 |  |Word Relationship|Modifier|Supported values|Comments|
-|-:|:-----------------:--------:---------------|:-------|
+|-:|:----------------|:-------|:---------------|:-------|
 | 1|meaning similar to|/means or /m|Any word or phrase||
 | 2|spells like|/spell or /sp|Any word or phrase|Wildcards are supported|
 | 3|sounds like|/sounds or /sou|Any word or phrase||
