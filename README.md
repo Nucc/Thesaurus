@@ -137,7 +137,7 @@ Some modifiers can be used to display more information about suggested words. Th
 | 2|IPA pronunciation|/pron||
 | 3|Word frequency|/freq|Uses per million words|
 
-###Examples
+### Examples
 
 |Selected string|Top suggestions|Comments|
 |:--------------|:--------------|:-------|
