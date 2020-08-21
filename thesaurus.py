@@ -56,7 +56,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       sublime.active_window().show_quick_panel(self.alternatives, self.alternativeIsSelected)
 
   def alternativeIsSelected(self, value):
-    if value > 1:
+    if value >= 1:
       self.processWord(self.alternatives[value])
     else:
       self.view.erase_status("Thesaurus")
@@ -78,7 +78,7 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
 
     value = re.subn(r'\(.*?\)$', "", value)[0]
     if value is not None:
-      self.view.replace(self.edit, self.region, value.strip().lower())
+      self.view.run_command("insert", {"characters": value.strip().lower()})
 
   def synonyms(self):
     result = []
@@ -129,7 +129,9 @@ class ThesaurusCommand(sublime_plugin.TextCommand):
       p.stdout.close()
       alternatives = []
       # this will replace the alternatives var
-      exec(alternativesString)
+      ldict = {}
+      exec(alternativesString, globals(), ldict)
+      alternatives = ldict['alternatives']
     except Exception as err:
       alternatives = ['error', str(err)]
     if alternatives[0] == "error":
